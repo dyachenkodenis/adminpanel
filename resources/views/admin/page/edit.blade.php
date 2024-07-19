@@ -32,13 +32,13 @@
 
 
                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item"  role="presentation">
                             <a class="nav-link" id="setting" data-bs-toggle="tab" href="#setting_panel" role="tab" aria-controls="setting" aria-selected="true">
                             Настройки страницы
                             </a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="content" data-bs-toggle="tab" href="#content_panel" role="tab" aria-controls="content" aria-selected="false">
+                            <a class="nav-link" id="content" data-bs-toggle="tab" href="#content_panel" role="tab" aria-controls="content" aria-selected="false">
                             Контент
                             </a>
                         </li>
@@ -118,7 +118,7 @@
 
                  </div>
 
-                  <div class="tab-pane active" id="content_panel" role="tabpanel" aria-labelledby="content">
+                  <div class="tab-pane " id="content_panel" role="tabpanel" aria-labelledby="content">
                     <ul class="nav nav-tabs" role="tablist">
                         {{--li class="nav-item" role="presentation">
                             <a class="nav-link active" id="ru_panel" data-bs-toggle="tab" href="#ru" role="tab" aria-controls="ru_panel" aria-selected="true">
@@ -268,7 +268,7 @@
                                         <!--button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editCompnent_{{ $i }}">
                                             Редактировать компонент
                                         </button-->
-                                        <a href="/admin/component/{{ $cm['id'] }}/edit" class="list-group-item list-group-item-action active" aria-current="true">
+                                        <a href="/admin/component/{{ $cm['id'] }}/edit" class="btn btn-primary" style="text-decoration:none" aria-current="true">
                                          Редактировать компонент
                                         </a>
                                         <div class="modal fade" id="editCompnent_{{ $i }}" tabindex="-1" aria-labelledby="editCompnent_{{ $i }}" aria-hidden="true">
@@ -999,40 +999,20 @@
     //   })
    // });
 
-   // Функция для сохранения текущего таба в localStorage
-function saveTabState(tabId) {
-    localStorage.setItem('activeTab', tabId);
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Получаем элементы табов
-    var tabs = document.querySelectorAll('.nav-tabs button');
-
-    // Инициализация табов с учетом сохраненного состояния
-    var activeTabId = localStorage.getItem('activeTab');
-    if (activeTabId) {
-        var activeTab = document.querySelector(activeTabId);
-        if (activeTab) {
-            var tabTrigger = activeTab.closest('.nav-item').querySelector('.nav-link');
-            var tabContentId = tabTrigger.getAttribute('data-bs-target');
-            var tabContent = document.querySelector(tabContentId);
-
-            // Активируем таб и контент
-            tabTrigger.classList.add('active');
-            tabContent.classList.add('show', 'active');
-        }
+  document.addEventListener("DOMContentLoaded", function () {
+    const storedTab = localStorage.getItem('activeTab');
+    if (storedTab) {
+      const triggerEl = document.querySelector(`#${storedTab}`);
+      const tab = new bootstrap.Tab(triggerEl);
+      tab.show();
     }
 
-    // Назначаем обработчики кликов на табы
-    tabs.forEach(function(tab) {
-        tab.addEventListener('click', function(event) {
-            var tabId = event.target.getAttribute('data-bs-target');
-
-            // Сохраняем выбранный таб в localStorage
-            saveTabState(tabId);
-        });
+    const tabLinks = document.querySelectorAll('.nav-link');
+    tabLinks.forEach(link => {
+      link.addEventListener('click', function () {
+        localStorage.setItem('activeTab', this.id);
+      });
     });
-});
-
-  </script>
+  });
+</script>
 @endsection
