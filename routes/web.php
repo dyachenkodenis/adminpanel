@@ -87,6 +87,12 @@ use \App\Http\Controllers\ClearAllController;
         });
     });
 
+
+    Route::post('/updatefields', [WebComponentController::class, 'updatefields']);
+
+    Route::post('/deletefields', [WebComponentController::class, 'deletefields']);
+
+
     Route::get('/admin/cm', [AsyncController::class, 'apidata']);
     //очистка кеша
     Route::get('/clear', [ClearAllController::class, 'clear']);

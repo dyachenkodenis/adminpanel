@@ -7,7 +7,7 @@ use App\Models\Page;
 use App\Models\Widget;
 use Illuminate\Http\Request;
 use App\Models\WebComponent;
-
+use Illuminate\Support\Collection;
 
 use App\Services\SlugGenerator;
 use Illuminate\Support\Facades\File;
@@ -72,27 +72,39 @@ class WebComponentController extends Controller
 
     public function update(Request $request, WebComponent $component)
     {
-
-        print_r($request->toArray());
-        exit;
+        $time = time();
+       
+        if ($component->jsonvalue !== null ) {
+            $arr = json_decode($component->jsonvalue);
+            array_push( $arr, ["{$time}" => [
+                'key' => $request['key'],
+                'type' => $request['type'],
+                'value' => $request['value']
+            ]] );
+        } else {
+            $arr = [];
+            array_push($arr, ["{$time}" => [
+                'key' => $request['key'],
+                'type' => $request['type'],
+                'value' => $request['value']
+            ]]);
+        }
+       
+      
 
         try {
             $component->update([
-                // 'title' => $request->setting['page_name'],
-                // 'jsonvalue' => $request->all(),
-                // 'template' => $request->setting['template_page'],
-                // 'widget' => $request->widget,
-                // 'status' => $request->setting['select_public'],
-                // 'slug' => $request->setting['slug_page']
+                'jsonvalue' => json_encode($arr),
+                'page_id' => $request['page_id'],
             ]);
 
 
             $notification = [
-                'message' => 'Запись успешно обновлена!',
-                'alert-type' => 'success',
+                'message' => 'Компонент успешно обновлен!',
+                'alert_type' => 'success',
             ];
 
-            return json_encode($notification);
+            return response()->json($notification);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Произошла ошибка при обновлении записи: ' . $e->getMessage());
         }
@@ -123,6 +135,7 @@ class WebComponentController extends Controller
                 'message' => 'Custom field delete successfully!',
                 'alert_type' => 'success',
             ];
+
             return response()->json($notification);
         }
     }
@@ -132,4 +145,73 @@ class WebComponentController extends Controller
         return response()->json(['test' => "sxsxs"]);
       
     }
+
+    public function updatefields(Request $request, WebComponent $webComponent)
+    {
+        //return print_r($request->toArray());
+       
+
+        $webComp = WebComponent::find($request['component_id']);
+       
+        $arr = json_decode($webComp->jsonvalue);
+
+        $collection = collect($arr);
+
+        $keyToUpdate = $request['field_id'];
+
+        $newValue = (object) [
+            'key' => $request['key'],
+            'type' => $request['type'],
+            'value' => $request['value'],
+        ];
+
+        // Обновляем коллекцию
+        $updatedCollection = $collection->map(function ($item) use ($keyToUpdate, $newValue) {
+            if (property_exists($item, $keyToUpdate)) {
+                $item->$keyToUpdate = $newValue;
+            }
+            return $item;
+        });
+       
+        $webComp->update([
+            'jsonvalue' => json_encode($updatedCollection->all()),
+        ]);
+
+        $notification = [
+            'message' => 'Элемент успешно обновлен!',
+            'alert_type' => 'success',
+        ];
+
+        return response()->json($notification);
+    }
+
+    public function deletefields(Request $request, WebComponent $webComponent)
+    {
+             
+       
+        $webComp = WebComponent::find($request['id_component']);
+        $arr = json_decode($webComp->jsonvalue);
+        
+        $collection = collect($arr);
+
+        $keyToDelete = $request['id'];
+
+        $filteredCollection = $collection->filter(function ($item) use ($keyToDelete) {
+                return !property_exists($item, $keyToDelete);
+        });
+
+        
+        $webComp->update([
+                'jsonvalue' => json_encode($filteredCollection->all()),
+            ]);
+
+        $notification = [
+            'message' => 'Элемент успешно удален!',
+            'alert_type' => 'success',
+        ];
+
+        return response()->json($notification);
+      
+    }
+
 }

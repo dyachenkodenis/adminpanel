@@ -57,6 +57,60 @@
                              
                             
                    
+                    <div class="container_page_fields">
+                        @php
+                            $arr_component_js = json_decode($component->jsonvalue);
+                            // print_r($arr_component_js);
+                            // exit;
+                        @endphp
+                                @foreach($arr_component_js as $k => $v)
+                                @php
+                                    $sub_keys = array_keys((array)$v);                                          
+                                    $sub_keys_str = implode(', ', $sub_keys);
+                                 
+                                @endphp     
+                                    @foreach ($v as $sub)
+                                    
+
+                                    <form id="field_{{ $sub_keys_str }}" class="row g-3 p-3">
+                                        @csrf
+                                        @method('POST')
+                                        <input type="text" name="field_id" value="{{ $sub_keys_str }}" hidden>
+                                        <input type="text" name="component_id" value="{{ $component->id }}" hidden>
+                                        <input type="text" name="type" value="{{ ($sub->type ?? 'string') }}" hidden>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <input type="text" name="key" value="{{ ($sub->key ?? "") }}" readonly class="form-control-plaintext">
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <input type="text" name="value" value="{{ ($sub->value ?? "") }}" class="form-control update_field">
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button data-update="{{ $sub_keys_str }}" class="btn btn-primary" type="submit">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                                                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="col-md-1">
+                                            <button data-delete="{{ $sub_keys_str }}" class="btn btn-danger" type="submit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                                </svg>
+                                            </button>
+                                            </div>
+                                        </div>
+
+                                    </form>
+
+
+                                    @endforeach
+                             
+
+                                @endforeach
+                            </div>
 
 
 
@@ -98,7 +152,7 @@
                 <button id="save" class="btn btn-primary" type="button" >Сохранить страницу</button>
             </div>
 
-             <div class="toast-container position-fixed bottom-0 end-0 p-3">
+               <div class="toast-container position-fixed bottom-0 end-0 p-3">
             <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
                 <strong class="me-auto">Сообщение!!!</strong>
@@ -110,51 +164,8 @@
             </div>
             </div>
 
-             <script>
-     
-       
-            async function fetchData() {
-                try {
-                    let response = await fetch('/admin/cm', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    let data = await response.json();
-                    console.log(data.body);
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-            }
 
         
-            fetchData();
-
-
-        // document.getElementById('add-data').addEventListener('click', async function() {
-        //     try {
-        //         let newData = { id: 4, name: 'Item 4' }; // Пример новых данных
-        //         let response = await fetch('/json-add', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        //             },
-        //             body: JSON.stringify(newData)
-        //         });
-        //         let result = await response.json();
-        //         console.log('Add Response:', result);
-        //     } catch (error) {
-        //         console.error('Error adding data:', error);
-        //     }
-        // });
-    </script>
 
               <script>
                 document.querySelector('#add_field').addEventListener('click', function(event) {
@@ -182,11 +193,19 @@
                                     })
                                         .then(response => response.json())
                                         .then(info => {
-                                            //  console.log(info);
-                                            if(info.alert_type == 'success'){
+                                     
+                                            if(info.alert_type  == 'success'){
+                                          
+                                                const toastLiveExample = document.getElementById('liveToast')
 
-                                                location.reload();
-                                            }
+                                                const toast = new bootstrap.Toast(toastLiveExample)
+                                                document.querySelector('.toast-body').textContent = info['message'];
+
+                                                                toast.show();
+                                                    
+                                                                 location.reload();
+
+                                            }                                          
 
 
                                         })
@@ -197,7 +216,71 @@
 
                                 });
 
+                
+                                     //обновление имеющегося поля записи
+                                var buttons = document.querySelectorAll('button[data-update]');
+                                buttons.forEach(function(button) {
+                                    button.addEventListener('click', function(event) {
+                                      
+                                        event.preventDefault();
+                                        let id_field = document.querySelector("#field_"+this.dataset.update);
+                                      
+                                        let formField = new FormData(id_field);
+                                     
+                                        var jsonFieldData = {};
+                                        for (var pair of formField.entries()) {
+                                            jsonFieldData[pair[0]] = pair[1];
+                                        }
+                                        fetch("/updatefields", {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                                'X-CSRF-Token': "{{ csrf_token()  }}",
+                                            },
+                                            body: JSON.stringify(jsonFieldData),
+                                        })
+                                            .then(response => response.json())
+                                            .then(info => {
+                                                if(info.alert_type == 'success'){
+                                                  //  location.reload();
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error(error);
+                                            });
+                                    });
+                                });
 
+                                //удаление имеющегося поля записи
+                                var buttons = document.querySelectorAll('button[data-delete]');
+                              
+                                buttons.forEach(function(button) {
+                                    
+                                    button.addEventListener('click', function(event) {
+                                      
+                                        event.preventDefault();
+                                        let id_field = this.dataset.delete;
+                                         
+
+                                        var xhr = new XMLHttpRequest();
+                                        xhr.open('POST', '/deletefields', true);
+                                        xhr.setRequestHeader('Content-Type', 'application/json');
+                                        xhr.setRequestHeader('X-CSRF-Token', '{{ csrf_token() }}');
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState === 4) {
+                                                if (xhr.status === 200) {
+                                                   location.reload();
+
+                                                } else {
+                                                    console.error('Ошибка:', xhr.statusText);
+                                                }
+                                            }
+                                        };
+                                        var requestData = JSON.stringify({ _method: 'POST', _token: '{{ csrf_token() }}', id: id_field , id_component: '{{ $component->id }}'});
+                                        xhr.send(requestData);
+
+                                    });
+                                });
     </script>
 
             </div>
@@ -213,8 +296,8 @@
         <!-- filemanager start -->
          <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
-  <!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script-->
-             <!-- filemanager stop -->
+  <script src="/admin_panel/js/bootstrap.min.js"></script>
+<!-- filemanager stop -->
 
 
 
