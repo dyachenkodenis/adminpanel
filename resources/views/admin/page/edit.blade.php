@@ -120,7 +120,7 @@
 
                   <div class="tab-pane " id="content_panel" role="tabpanel" aria-labelledby="content">
                     <ul class="nav nav-tabs" role="tablist">
-                        {{--li class="nav-item" role="presentation">
+                        <li class="nav-item" role="presentation">
                             <a class="nav-link active" id="ru_panel" data-bs-toggle="tab" href="#ru" role="tab" aria-controls="ru_panel" aria-selected="true">
                                 ru
                             </a>
@@ -134,7 +134,7 @@
                             <a class="nav-link" id="uz_panel" data-bs-toggle="tab" href="#uz" role="tab" aria-controls="uz_panel" aria-selected="false">
                             uz
                             </a>
-                        </li--}}
+                        </li>
                     </ul>
 
                     <div class="tab-content pt-2" id="tab-content">
@@ -210,12 +210,12 @@
 
 
                         </div>
-                        {{--div class="tab-pane" id="en" role="tabpanel" aria-labelledby="en_panel">
+                        <div class="tab-pane" id="en" role="tabpanel" aria-labelledby="en_panel">
                             <x-pages.home id="en_component" widget='{--  with($page->widget) --}' />
                         </div>
                         <div class="tab-pane" id="uz" role="tabpanel" aria-labelledby="uz_panel">
                             <x-pages.home id="uz_component" widget='{--  with($page->widget) --}'/>
-                        </div--}}
+                            </div>
                     </div>
 
                   </div>
@@ -265,9 +265,7 @@
                                 <tr>
                                     <td>{{ ($cm['title'] ?? "") }}</td>
                                     <td>
-                                        <!--button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editCompnent_{{ $i }}">
-                                            Редактировать компонент
-                                        </button-->
+                                       
                                         <a href="/admin/component/{{ $cm['id'] }}/edit" class="btn btn-primary" style="text-decoration:none" aria-current="true">
                                          Редактировать компонент
                                         </a>
@@ -281,7 +279,7 @@
                                                     <div class="modal-body container_page_fields_component">
                                                         @php
                                                             $get_field_from_component = \App\Services\GetWidgetData::get_widget_fields($cm['id']);
-                                                          //dd($get_field_from_component);
+                                                       
                                                         @endphp
 
                                                         @foreach($get_field_from_component as $saved_field_for_component)
@@ -748,72 +746,72 @@
                                         }
                                     }
 
-                                    // let formRu = document.querySelector('#ru_component');
-                                    //
-                                    // for(const key in data_json.ru) {
-                                    //     const input = formRu.querySelector(`input[name="${key}"]`)
-                                    //      const textarea = formRu.querySelector(`textarea[name="${key}"]`)
-                                    //       const select = formRu.querySelector(`select[name="${key}"]`)
-                                    //     if (input) {
-                                    //         input.value = data_json.ru[key]
-                                    //     }
-                                    //     if (textarea) {
-                                    //         textarea.value = data_json.ru[key]
-                                    //     }
-                                    //     if (select) {
-                                    //         select.value = data_json.ru[key]
-                                    //     }
-                                    // }
+                                    let formRu = document.querySelector('#ru_component');
+                                    
+                                    for(const key in data_json.ru) {
+                                        const input = formRu.querySelector(`input[name="${key}"]`)
+                                         const textarea = formRu.querySelector(`textarea[name="${key}"]`)
+                                          const select = formRu.querySelector(`select[name="${key}"]`)
+                                        if (input) {
+                                            input.value = data_json.ru[key]
+                                        }
+                                        if (textarea) {
+                                            textarea.value = data_json.ru[key]
+                                        }
+                                        if (select) {
+                                            select.value = data_json.ru[key]
+                                        }
+                                    }
 
-                                    // let formUz = document.querySelector('#uz_component');
+                                    let formUz = document.querySelector('#uz_component');
 
-                                    // for(const key in data_json.uz) {
-                                    //     const input = formUz.querySelector(`input[name="${key}"]`)
-                                    //     const textarea = formUz.querySelector(`textarea[name="${key}"]`)
-                                    //       const select = formUz.querySelector(`select[name="${key}"]`)
-                                    //     if (input) {
-                                    //         input.setAttribute('value', data_json.uz[key])
-                                    //     }
-                                    //     if (textarea) {
-                                    //         textarea.textContent = data_json.uz[key]
-                                    //     }
-                                    //     if (select) {
-                                    //         select.value = data_json.uz[key]
-                                    //     }
-                                    // }
+                                    for(const key in data_json.uz) {
+                                        const input = formUz.querySelector(`input[name="${key}"]`)
+                                        const textarea = formUz.querySelector(`textarea[name="${key}"]`)
+                                          const select = formUz.querySelector(`select[name="${key}"]`)
+                                        if (input) {
+                                            input.setAttribute('value', data_json.uz[key])
+                                        }
+                                        if (textarea) {
+                                            textarea.textContent = data_json.uz[key]
+                                        }
+                                        if (select) {
+                                            select.value = data_json.uz[key]
+                                        }
+                                    }
 
-                                    //   let formEn = document.querySelector('#en_component');
+                                      let formEn = document.querySelector('#en_component');
 
-                                    // for(const key in data_json.en) {
-                                    //     const input = formEn.querySelector(`input[name="${key}"]`)
-                                    //     const textarea = formEn.querySelector(`textarea[name="${key}"]`)
-                                    //       const select = formEn.querySelector(`select[name="${key}"]`)
-                                    //     if (input) {
-                                    //         input.setAttribute('value', data_json.en[key])
-                                    //     }
-                                    //     if (textarea) {
-                                    //         textarea.textContent = data_json.en[key]
-                                    //     }
-                                    //     if (select) {
-                                    //         select.value = data_json.en[key]
-                                    //     }
-                                    // }
+                                    for(const key in data_json.en) {
+                                        const input = formEn.querySelector(`input[name="${key}"]`)
+                                        const textarea = formEn.querySelector(`textarea[name="${key}"]`)
+                                          const select = formEn.querySelector(`select[name="${key}"]`)
+                                        if (input) {
+                                            input.setAttribute('value', data_json.en[key])
+                                        }
+                                        if (textarea) {
+                                            textarea.textContent = data_json.en[key]
+                                        }
+                                        if (select) {
+                                            select.value = data_json.en[key]
+                                        }
+                                    }
                                 @endif
 
                         document.querySelector('#save').addEventListener('click', alldata);
 
                                         function getData() {
                                         const formData = new FormData(document.querySelector('form#setting_form'));
-                                      //  const formDataRu = new FormData(document.querySelector('form#ru_component'));
-                                      //  const formDataUz = new FormData(document.querySelector('form#uz_component'));
-                                      //  const formDataEn = new FormData(document.querySelector('form#en_component'));
+                                       const formDataRu = new FormData(document.querySelector('form#ru_component'));
+                                       const formDataUz = new FormData(document.querySelector('form#uz_component'));
+                                       const formDataEn = new FormData(document.querySelector('form#en_component'));
 
 
 
                                         jsonObject.setting = Object.fromEntries(formData);
-                                   //    jsonObject.ru = Object.fromEntries(formDataRu);
-                                     //   jsonObject.uz = Object.fromEntries(formDataUz);
-                                      //  jsonObject.en = Object.fromEntries(formDataEn);
+                                      jsonObject.ru = Object.fromEntries(formDataRu);
+                                       jsonObject.uz = Object.fromEntries(formDataUz);
+                                       jsonObject.en = Object.fromEntries(formDataEn);
                                         return jsonObject;
                                         }
 

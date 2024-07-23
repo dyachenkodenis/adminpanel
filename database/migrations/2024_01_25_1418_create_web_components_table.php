@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('page_id')->nullable();
 
-            $table->unsignedBigInteger('custom_fields_id')->nullable();
+            $table->json('jsonvalue')->nullable();
 
             $table->unsignedBigInteger('widget_id')->nullable();
 

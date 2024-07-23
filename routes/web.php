@@ -19,6 +19,7 @@ use App\Http\Controllers\admin\ActivityLogController;
 use App\Http\Controllers\admin\WidgetController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\DictionaryController;
+use App\Http\Controllers\AsyncController;
 //классы для фронта
 use App\Http\Controllers\front\FrontPageController;
 use App\Http\Controllers\front\FrontProductController;
@@ -86,6 +87,7 @@ use \App\Http\Controllers\ClearAllController;
         });
     });
 
+    Route::get('/admin/cm', [AsyncController::class, 'apidata']);
     //очистка кеша
     Route::get('/clear', [ClearAllController::class, 'clear']);
     //для главной страницы
@@ -104,7 +106,10 @@ use \App\Http\Controllers\ClearAllController;
 
 
     Route::post('/update_pages_field', [CustomFieldController::class, 'update_pages_field']);
-Route::post('/delete_field', [CustomFieldController::class, 'delete_field']);
+    Route::post('/delete_field', [CustomFieldController::class, 'delete_field']);
 
-Route::post('/add_field_for_component', [CustomFieldController::class, 'add_field_for_component']);
-Route::post('/delete_comp', [WebComponentController::class, 'delete_comp']);
+    Route::post('/add_field_for_component', [CustomFieldController::class, 'add_field_for_component']);
+    Route::post('/delete_comp', [WebComponentController::class, 'delete_comp']);
+
+
+  

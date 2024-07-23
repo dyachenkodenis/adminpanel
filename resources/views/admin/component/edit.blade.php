@@ -7,14 +7,19 @@
   
     <div class="container-fluid px-4">
         <h1 class="mt-4">{{ $component->title }}</h1>
-        <a href="/admin/page/1/edit">переход на страницу компонента</a>
+        <div class="row">
+            <div class="col-md-12 pt-2 pb-4">
+                   <a class="btn btn-primary" href="/admin/page/{{  $component->page_id }}/edit">Переход на страницу компонента</a>
+            </div>
+        </div>
+     
         @if (session('update'))
              <div class="col-md-12">
                     <div class="alert alert-danger" role="alert">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
                  <ul>
                     @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
+                        <li>{{ $error }}</li> 
                     @endforeach
                 </ul>
                 <strong>{{ session('update') }}</strong>
@@ -26,60 +31,66 @@
 
             <div class="card-body">
 
+               <?php
+                   
+                    if(!empty($component->jsonvalue) && $component->jsonvalue){
 
+                    $array_component = $component->jsonvalue;
+                    echo "<script> const arr_data = '" .$array_component. "'; </script>";
+                    
+                    }else{
+                    
+                    $array_component = "[]";
+                    echo "<script> const arr_data = '" .$array_component. "'; </script>";
+                    
+                    }
+
+                  //  print_r($array_component);
+
+               ?>
                   
-            <div class="tab-content pt-2" id="tab-content">
+            <div class="pt-2">
 
-                 <div class="tab-pane " id="setting_panel" role="tabpanel" aria-labelledby="setting">
-
-                    <form id="setting_form" action="">
-                    <div class="col-md-12 m-2">
-                        <label for="page_name" class="form-label">Название страницы</label>
-                        <input type="text" value="{--{ $component->title }--}" name="page_name" class="form-control" id="page_name">
-                        <div class="valid-feedback">
-                        </div>
-                    </div>
-                     <div class="col-md-12">
-                        <label for="slugPage" class="form-label">Ссылка на страницу</label>
-                        <input type="text" value="{--{ $component->slug }--}" name="slug_page" class="form-control" id="slugPage" >
-                        <div class="valid-feedback">
-                        </div>
-                    </div>
-
+                {{ $component->title }}
                   
-
-                      <div class="col-md-12 m-2">
-                        <label for="page_template" class="form-label">Опубликовать/Скрыть страницу</label>
-                        <select class="form-select form-select-sm" name="select_public" aria-label=".form-select-sm example">
-                        <option value="activate" selected>Опубликовано</option>
-                        <option value="deactivate">Скрыто</option>
-                        </select>
-                      </div>
-
-                       <div class="col-md-12 mt-5">
-                            <h3>Seo настройки</h3>
-                        </div>
+                 <div class="container_page_fields">
+                             
+                            
+                   
 
 
-                        <div class="col-md-12 m-2">
-                            <label for="page_keywords" class="form-label">Keywords</label>
-                            <textarea class="form-control" name="page_keywords" id="page_keywords" rows="2"></textarea>
-                        </div>
 
-                        <div class="col-md-12 m-2">
-                            <label for="page_description" class="form-label">Description</label>
-                            <textarea class="form-control" name="page_description" id="page_description" rows="4"></textarea>
-                        </div>
 
-                        <div class="col-md-12 m-2">
-                            <label for="page_schema" class="form-label">Schema</label>
-                            <textarea class="form-control" name="page_schema" id="page_schema" rows="8"></textarea>
-                        </div>
+                                <form id="form_add_field" class="row g-3 pt-3" novalidate>
+                                @csrf
+                                @method('POST')
+                                <input type="text" name="page_id" value="{{$component->page_id}}" hidden>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input type="text" name="key" class="form-control">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select id="selectType" class="form-select" name="type">
+                                          @php
+                                              $get_type_field = App\Services\GetTypeFields::get_type();
+                                          @endphp
+                                            @foreach( $get_type_field  as $d => $dd)
+                                                <option value="{{ $d }}">{{ $dd }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 value_field">
+                                        <input type="text" name="value" class="form-control">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button id="add_field" class="btn btn-primary" type="submit">Добавить строку</button>
+                                    </div>
+                                </div>
 
-                      </form>
+                            </form>
 
-                 </div>
 
+                 
                 
             </div>
 
@@ -99,95 +110,92 @@
             </div>
             </div>
 
-              <script>
-               const jsonObject = {};
+             <script>
+     
+       
+            async function fetchData() {
+                try {
+                    let response = await fetch('/admin/cm', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
 
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
 
-
-
-
-                window.onload = function(){
-
-                                    @if(isset($component->jsonvalue) && $component->jsonvalue)
-                                        @php
-                                        echo 'var data_json ='.json_encode($component->jsonvalue);
-                                        @endphp
-
-                                       // console.log(data_json.setting);
-
-                                    let formS = document.querySelector('#setting_form');
-
-                                    for(const key in data_json.setting) {
-                                        const input = formS.querySelector(`input[name="${key}"]`)
-                                        const textarea = formS.querySelector(`textarea[name="${key}"]`)
-                                        const select = formS.querySelector(`select[name="${key}"]`)
-                                        if (input) {
-                                            input.value = data_json.setting[key]
-                                        }
-                                        if (textarea) {
-                                            textarea.value = data_json.setting[key]
-                                        }
-                                        if (select) {
-                                            select.value = data_json.setting[key]
-                                        }
-                                    }
-
-                                    let formRu = document.querySelector('#ru_component');
-                                                                 
-                                @endif
-
-                        document.querySelector('#save').addEventListener('click', alldata);
-
-                                        function getData() {
-                                        const formData = new FormData(document.querySelector('form#setting_form'));
-                                       const formDataRu = new FormData(document.querySelector('form#ru_component'));
-                                       const formDataUz = new FormData(document.querySelector('form#uz_component'));
-                                       const formDataEn = new FormData(document.querySelector('form#en_component'));
-
-
-
-                                        jsonObject.setting = Object.fromEntries(formData);
-                                     
-                                        return jsonObject;
-                                        }
-
-
-                                        function alldata()
-                                        {
-                                          //  console.log(getData());
-                                            fetch("{{ route('admin.page.update', $component->id) }}", {
-                                                method: "POST",
-                                                headers: {
-                                                    "Content-Type": "application/json",
-                                                    'X-CSRF-Token': "{{ csrf_token()  }}",
-                                                },
-                                                body: JSON.stringify(getData()),
-                                            })
-                                                .then(response => response.json())
-                                                .then(info => {
-                                                 //   console.log(info); // Ответ от сервера
-
-                                                    if(info['alert-type'] == 'success'){
-                                                        const toastLiveExample = document.getElementById('liveToast')
-
-                                                                const toast = new bootstrap.Toast(toastLiveExample)
-                                                            document.querySelector('.toast-body').textContent = info['message'];
-
-                                                                toast.show()
-
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error(error);
-                                                });
-
-
-                                        }
-
-
-
+                    let data = await response.json();
+                    console.log(data.body);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
                 }
+            }
 
+        
+            fetchData();
+
+
+        // document.getElementById('add-data').addEventListener('click', async function() {
+        //     try {
+        //         let newData = { id: 4, name: 'Item 4' }; // Пример новых данных
+        //         let response = await fetch('/json-add', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        //             },
+        //             body: JSON.stringify(newData)
+        //         });
+        //         let result = await response.json();
+        //         console.log('Add Response:', result);
+        //     } catch (error) {
+        //         console.error('Error adding data:', error);
+        //     }
+        // });
+    </script>
+
+              <script>
+                document.querySelector('#add_field').addEventListener('click', function(event) {
+                                    event.preventDefault();
+
+                                    var formAddFieldElement = document.getElementById('form_add_field');
+
+                                    var formAddData = new FormData(formAddFieldElement);
+
+                                    var formAddDataObject = {};
+                                    formAddData.forEach(function(value, key){
+                                        formAddDataObject[key] = value;
+                                    });
+
+                                    var jsonData = JSON.stringify(formAddDataObject);
+
+
+                                      fetch("{{ route('admin.component.update', $component->id) }}", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            'X-CSRF-Token': "{{ csrf_token()  }}",
+                                        },
+                                        body: jsonData,
+                                    })
+                                        .then(response => response.json())
+                                        .then(info => {
+                                            //  console.log(info);
+                                            if(info.alert_type == 'success'){
+
+                                                location.reload();
+                                            }
+
+
+                                        })
+                                        .catch(error => {
+                                            console.error(error);
+                                        });
+
+
+                                });
 
 
     </script>

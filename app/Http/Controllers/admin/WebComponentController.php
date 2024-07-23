@@ -39,7 +39,7 @@ class WebComponentController extends Controller
         $request->validate([
             'title' => '',
             'page_id' => '',
-            'widget_id' => '',
+            'widget_id' => ''
         ]);
 
 
@@ -70,18 +70,20 @@ class WebComponentController extends Controller
         return view('admin.component.edit', compact( 'widget', 'files', 'component'));
     }
 
-    public function update(Request $request, Page $page)
+    public function update(Request $request, WebComponent $component)
     {
 
+        print_r($request->toArray());
+        exit;
 
         try {
-            $page->update([
-                'title' => $request->setting['page_name'],
-                'jsonvalue' => $request->all(),
-                'template' => $request->setting['template_page'],
-                'widget' => $request->widget,
-                'status' => $request->setting['select_public'],
-                'slug' => $request->setting['slug_page']
+            $component->update([
+                // 'title' => $request->setting['page_name'],
+                // 'jsonvalue' => $request->all(),
+                // 'template' => $request->setting['template_page'],
+                // 'widget' => $request->widget,
+                // 'status' => $request->setting['select_public'],
+                // 'slug' => $request->setting['slug_page']
             ]);
 
 
@@ -125,5 +127,9 @@ class WebComponentController extends Controller
         }
     }
 
-
+    public function apidata()
+    {
+        return response()->json(['test' => "sxsxs"]);
+      
+    }
 }

@@ -13,7 +13,7 @@ class WebComponent extends Model
     protected $fillable = [
         'title',
         'page_id',
-        'custom_fields_id',
+        'jsonvalue',
         'widget_id',
     ];
     protected $table = 'web_components';
