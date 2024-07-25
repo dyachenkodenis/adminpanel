@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Actions\WebComponentDeleteFieldsActions;
+use App\Actions\WebComponentUpdateFieldsActions;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\Widget;
@@ -12,7 +14,7 @@ use Illuminate\Support\Collection;
 use App\Services\SlugGenerator;
 use Illuminate\Support\Facades\File;
 use App\Services\ParsePathPages;
-
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -44,7 +46,7 @@ class WebComponentController extends Controller
 
 
         WebComponent::create([
-            'title' =>  \App\Services\GetWidgetData::get_title($request->widget_id),
+            'title' =>  \App\Services\GetWidgetData::getTitle($request->widget_id),
             'page_id' => $request->page_id,
             'widget_id' => $request->widget_id,
         ]);
@@ -73,28 +75,26 @@ class WebComponentController extends Controller
     public function update(Request $request, WebComponent $component)
     {
         $time = time();
-       
-        if ($component->jsonvalue !== null ) {
-            $arr = json_decode($component->jsonvalue);
-            array_push( $arr, ["{$time}" => [
+        $arr = json_decode($component->jsonvalue);
+
+        $collection = collect($arr);
+
+        $item = (object)["{$time}" => (object)[
                 'key' => $request['key'],
                 'type' => $request['type'],
+                'lang' => $request['lang'],
                 'value' => $request['value']
-            ]] );
-        } else {
-            $arr = [];
-            array_push($arr, ["{$time}" => [
-                'key' => $request['key'],
-                'type' => $request['type'],
-                'value' => $request['value']
-            ]]);
-        }
-       
-      
+            ]];
+
+        $array = $collection->toArray();
+
+        
+        $array[] = $item;
+     
 
         try {
             $component->update([
-                'jsonvalue' => json_encode($arr),
+                'jsonvalue' => json_encode($array),
                 'page_id' => $request['page_id'],
             ]);
 
@@ -146,72 +146,42 @@ class WebComponentController extends Controller
       
     }
 
-    public function updatefields(Request $request, WebComponent $webComponent)
+    public function updatefields(Request $request, WebComponentUpdateFieldsActions $action, WebComponent $webComponent)
     {
-        //return print_r($request->toArray());
-       
+        try {
+            $webComp = WebComponent::find($request['component_id']);
 
-        $webComp = WebComponent::find($request['component_id']);
-       
-        $arr = json_decode($webComp->jsonvalue);
+            $action->handle($request, $webComp);
 
-        $collection = collect($arr);
+            $notification = [
+                'message' => 'Элемент успешно обновлен!',
+                'alert_type' => 'success',
+            ];
 
-        $keyToUpdate = $request['field_id'];
-
-        $newValue = (object) [
-            'key' => $request['key'],
-            'type' => $request['type'],
-            'value' => $request['value'],
-        ];
-
-        // Обновляем коллекцию
-        $updatedCollection = $collection->map(function ($item) use ($keyToUpdate, $newValue) {
-            if (property_exists($item, $keyToUpdate)) {
-                $item->$keyToUpdate = $newValue;
-            }
-            return $item;
-        });
-       
-        $webComp->update([
-            'jsonvalue' => json_encode($updatedCollection->all()),
-        ]);
-
-        $notification = [
-            'message' => 'Элемент успешно обновлен!',
-            'alert_type' => 'success',
-        ];
-
-        return response()->json($notification);
+            return response()->json($notification);
+        } catch ( \Exception $e ) {
+            return redirect()->back()->with('error', 'Произошла ошибка: ' . $e->getMessage());
+        }
+        
     }
 
-    public function deletefields(Request $request, WebComponent $webComponent)
+    public function deletefields(Request $request, WebComponentDeleteFieldsActions $action, WebComponent $webComponent)
     {
-             
-       
-        $webComp = WebComponent::find($request['id_component']);
-        $arr = json_decode($webComp->jsonvalue);
+        try {
+            $webComp = WebComponent::find($request['id_component']);
+
+            $action->handle($request, $webComp);
         
-        $collection = collect($arr);
 
-        $keyToDelete = $request['id'];
+            $notification = [
+                'message' => 'Элемент успешно удален!',
+                'alert_type' => 'success',
+            ];
 
-        $filteredCollection = $collection->filter(function ($item) use ($keyToDelete) {
-                return !property_exists($item, $keyToDelete);
-        });
-
-        
-        $webComp->update([
-                'jsonvalue' => json_encode($filteredCollection->all()),
-            ]);
-
-        $notification = [
-            'message' => 'Элемент успешно удален!',
-            'alert_type' => 'success',
-        ];
-
-        return response()->json($notification);
-      
+            return response()->json($notification);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Произошла ошибка: ' . $e->getMessage());
+        }
     }
 
 }

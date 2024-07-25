@@ -7,6 +7,7 @@ use App\Http\Controllers\admin\CustomFieldController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\ProfileController;
 use App\Http\Controllers\admin\FieldController;
+use App\Http\Controllers\admin\LocaleController;
 use App\Http\Controllers\admin\FeedbackController;
 use App\Http\Controllers\admin\SettingController;
 use App\Http\Controllers\admin\PageController;
@@ -61,6 +62,9 @@ use \App\Http\Controllers\ClearAllController;
 
             Route::resource('customfields', CustomFieldController::class);
             Route::post('/customfields/{customfields}', [CustomFieldController::class, 'update']);
+
+            Route::resource('locale', LocaleController::class);
+            Route::post('/locale/{locale}', [LocaleController::class, 'update']);
 
             Route::resource('work/posts', WorkController::class)->names([
                 'index' => 'work.posts.index',

@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Field extends Model
+class Locale extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'key',
-        'value'
+        'code',
+        'name'
     ];
-    protected $table = 'field';
+    protected $table = 'locales';
     public $timestamps = true;
-
-   
 }

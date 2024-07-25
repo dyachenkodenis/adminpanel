@@ -22,7 +22,7 @@ class Widget extends Model
     {
         return Attribute::make(fn ($value) => json_decode($value), fn ($value) => json_encode($value));
     }
-    public function custom_fields()
+    public function customFields()
     {
         return $this->hasMany(CustomField::class);
     }

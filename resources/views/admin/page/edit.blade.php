@@ -117,105 +117,51 @@
                       </form>
 
                  </div>
-
+        @php
+            $locales =  \App\Services\Options\GetListLang::get();         
+        @endphp
                   <div class="tab-pane " id="content_panel" role="tabpanel" aria-labelledby="content">
                     <ul class="nav nav-tabs" role="tablist">
+                         @php
+                            $i = 1;
+                        @endphp
+                        @foreach ($locales as $loc)
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="ru_panel" data-bs-toggle="tab" href="#ru" role="tab" aria-controls="ru_panel" aria-selected="true">
-                                ru
+                            <a class="nav-link {{ ($i == 1)?"active":""; }}" 
+                            id="{{ strtolower($loc) }}_panel" 
+                            data-bs-toggle="tab" 
+                            href="#{{ strtolower($loc) }}" 
+                            role="tab" 
+                            aria-controls="{{ strtolower($loc) }}_panel" 
+                            aria-selected="{{ ($i == 1)?"true":""; }}">
+                                {{ strtolower($loc) }}
                             </a>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="en_panel" data-bs-toggle="tab" href="#en" role="tab" aria-controls="en_panel" aria-selected="false">
-                            en
-                            </a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="uz_panel" data-bs-toggle="tab" href="#uz" role="tab" aria-controls="uz_panel" aria-selected="false">
-                            uz
-                            </a>
-                        </li>
+                          @php
+                            $i++;
+                        @endphp
+                        @endforeach
                     </ul>
 
                     <div class="tab-content pt-2" id="tab-content">
-                        <div class="tab-pane active" id="ru" role="tabpanel" aria-labelledby="ru_panel">
-                            <div class="container_page_fields">
-                                @foreach($custom_fields->toArray() as $k)
-
-                                    <form id="{{ 'field_'.$k['id'] }}" class="row g-3 p-3">
-                                        @csrf
-                                        @method('POST')
-                                        <input type="text" name="custom_field_id" value="{{ $k['id'] }}" hidden>
-                                        <input type="text" name="type" value="{{ ($k['jsonvalue']->type ?? "") }}" hidden>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <input type="text" name="key" value="{{ ($k['jsonvalue']->key ?? "") }}" readonly class="form-control-plaintext">
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <input type="text" name="value" value="{{ ($k['jsonvalue']->value ?? "") }}" class="form-control update_field">
-                                            </div>
-                                            <div class="col-md-1">
-                                                <button data-update="{{ $k['id'] }}" class="btn btn-primary" type="submit">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-                                                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                            <div class="col-md-1">
-                                            <button data-delete="{{ $k['id'] }}" class="btn btn-danger" type="submit">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                                                </svg>
-                                            </button>
-                                            </div>
-                                        </div>
-
-                                    </form>
-
-                                @endforeach
-                            </div>
-
-
-
-
-                                <form id="form_add_field" class="row g-3 pt-3" novalidate>
-                                @csrf
-                                @method('POST')
-                                <input type="text" name="page_id" value="{{$page->id}}" hidden>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <input type="text" name="key" class="form-control">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <select id="selectType" class="form-select" name="type">
-                                          @php
-                                              $get_type_field = App\Services\GetTypeFields::get_type();
-                                          @endphp
-                                            @foreach( $get_type_field  as $d => $dd)
-                                                <option value="{{ $d }}">{{ $dd }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 value_field">
-                                        <input type="text" name="value" class="form-control">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button id="add_field" class="btn btn-primary" type="submit">Добавить строку</button>
-                                    </div>
-                                </div>
-
-                            </form>
-
-
+                          @php
+                            $i = 1;
+                            //print_r($page->toArray());
+                        @endphp
+                        @foreach ($locales as $loc)
+                        <div class="tab-pane {{ ($i == 1)?"active":""; }}" id="{{ strtolower($loc) }}" role="tabpanel" aria-labelledby="{{ strtolower($loc) }}_panel">
+                            <x-pages.home id="{{ strtolower($loc) }}_component" widget='{{  with($page->widget) }}' />
                         </div>
-                        <div class="tab-pane" id="en" role="tabpanel" aria-labelledby="en_panel">
-                            <x-pages.home id="en_component" widget='{--  with($page->widget) --}' />
+                            @php
+                            $i++;
+                        @endphp
+                        @endforeach
+                        {{-- <div class="tab-pane" id="en" role="tabpanel" aria-labelledby="en_panel">
+                            <x-pages.home id="en_component" widget='{{  with($page->widget) }}' />
                         </div>
                         <div class="tab-pane" id="uz" role="tabpanel" aria-labelledby="uz_panel">
-                            <x-pages.home id="uz_component" widget='{--  with($page->widget) --}'/>
-                            </div>
+                            <x-pages.home id="uz_component" widget='{{  with($page->widget) }}'/>
+                        </div> --}}
                     </div>
 
                   </div>
@@ -260,7 +206,7 @@
                                     @endphp
                                     @foreach($component->toArray() as $cm)
                                     @php
-                                    $all_widget_dat = App\Services\GetWidgetData::get_all($page->id);
+                                    $all_widget_dat = App\Services\GetWidgetData::getAll($page->id);                                 
                                     @endphp
                                 <tr>
                                     <td>{{ ($cm['title'] ?? "") }}</td>
@@ -278,7 +224,7 @@
                                                     </div>
                                                     <div class="modal-body container_page_fields_component">
                                                         @php
-                                                            $get_field_from_component = \App\Services\GetWidgetData::get_widget_fields($cm['id']);
+                                                            $get_field_from_component = \App\Services\GetWidgetData::getWidgetFields($cm['id']);
                                                        
                                                         @endphp
 
@@ -378,6 +324,10 @@
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCompnent_{{ $i }}">
                                            Просмотр компонента
                                         </button>
+
+                                        @php
+                                         
+                                        @endphp
                                         <div class="modal fade" id="viewCompnent_{{ $i }}" tabindex="-1" aria-labelledby="viewCompnent_{{ $i }}" aria-hidden="true">
                                             <div class="modal-dialog modal-xl">
                                                 <div class="modal-content">
@@ -386,7 +336,8 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <img src="{{ ($all_widget_dat['thumbnail'] ?? "") }}" class="img-fluid"  alt="Изображение компонента">
+                                                       
+                                                        <img src="{{ ($all_widget_dat[$i]['thumbnail'] ?? "") }}" class="img-fluid"  alt="Изображение компонента">
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

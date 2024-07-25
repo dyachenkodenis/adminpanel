@@ -66,7 +66,7 @@
                             <div class="collapse" id="collapseLayoutsetting" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="/admin/field"><div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>Строки переводов</a>
-                                    <a class="nav-link" href="/admin/customfields"><div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>Customfields</a>
+                                    <a class="nav-link" href="/admin/locale"><div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>Локализация сайта</a>
                                     <a class="nav-link" href="/admin/setting"><div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>Настройки</a>
                                     <a class="nav-link" href="/admin/widget"><div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>Виджеты</a>
                                     <a class="nav-link" href="/admin/activity_log"><div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>Логирование</a>

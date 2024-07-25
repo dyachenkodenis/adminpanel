@@ -27,41 +27,59 @@
             </div>
         @endif
 
+
+        @php
+            $locales =  \App\Services\Options\GetListLang::get();
+           // print_r($locales);
+        @endphp
         <div class="card mb-12">
 
             <div class="card-body">
 
-               <?php
-                   
-                    if(!empty($component->jsonvalue) && $component->jsonvalue){
-
-                    $array_component = $component->jsonvalue;
-                    echo "<script> const arr_data = '" .$array_component. "'; </script>";
-                    
-                    }else{
-                    
-                    $array_component = "[]";
-                    echo "<script> const arr_data = '" .$array_component. "'; </script>";
-                    
-                    }
-
-                  //  print_r($array_component);
-
-               ?>
+              <div class="tab-pane " id="content_panel" role="tabpanel" aria-labelledby="content">
+                    <ul class="nav nav-tabs" role="tablist">
+                        @php
+                            $i = 1;
+                        @endphp
+                        @foreach ($locales as $loc)
+                          <li class="nav-item" role="presentation">
+                            <a class="nav-link {{ ($i == 1)?"active":""; }}" 
+                                id="{{ strtolower($loc) }}_panel" 
+                                data-bs-toggle="tab" 
+                                href="#{{ strtolower($loc) }}" 
+                                role="tab" 
+                                aria-controls="{{ strtolower($loc) }}_panel" 
+                                aria-selected="{{ ($i == 1)?"true":""; }}">
+                                @php 
+                                    echo strtolower($loc);
+                                @endphp
+                            </a>
+                        </li>      
+                        @php
+                            $i++;
+                        @endphp
+                        @endforeach
+                    </ul>
                   
-            <div class="pt-2">
+            <div class="tab-content pt-2" id="tab-content">
 
-                {{ $component->title }}
+            @php
+                $i = 1;
+            @endphp
+            @foreach ($locales as $loc)
+            <div class="tab-pane {{ ($i == 1)?"active":""; }}" 
+                    id="{{ strtolower($loc) }}" 
+                    role="tabpanel" 
+                    aria-labelledby="{{ strtolower($loc) }}_panel">
+                {{-- <h3>
+                       {{ $component->title }}
+                </h3> --}}
+             
                   
-                 <div class="container_page_fields">
-                             
-                            
-                   
+                 <div class="container_page_fields">                   
                     <div class="container_page_fields">
                         @php
-                            $arr_component_js = json_decode($component->jsonvalue);
-                            // print_r($arr_component_js);
-                            // exit;
+                            $arr_component_js = json_decode($component->jsonvalue);                          
                         @endphp
                                 @foreach($arr_component_js as $k => $v)
                                 @php
@@ -69,8 +87,8 @@
                                     $sub_keys_str = implode(', ', $sub_keys);
                                  
                                 @endphp     
-                                    @foreach ($v as $sub)
-                                    
+                                    @foreach ($v as $sub)             
+                                    @if($sub->lang === strtolower($loc))                
 
                                     <form id="field_{{ $sub_keys_str }}" class="row g-3 p-3">
                                         @csrf
@@ -104,24 +122,49 @@
                                         </div>
 
                                     </form>
-
-
+                                    @endif
                                     @endforeach
-                             
 
                                 @endforeach
                             </div>
+                 
+
+                  
 
 
+                 
+                
+                </div></div>
+             @php
+                $i++;
+            @endphp
+            @endforeach
+                   </div>
 
+                       <div class="card mb-12">
+            <div class="card-body">
 
-                                <form id="form_add_field" class="row g-3 pt-3" novalidate>
+                      <form id="form_add_field" class="row g-3 pt-3" novalidate>
                                 @csrf
                                 @method('POST')
                                 <input type="text" name="page_id" value="{{$component->page_id}}" hidden>
+                              
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <input type="text" name="key" class="form-control">
+                                    </div>
+                                     <div class="col-md-1">
+                                        <select id="selectType" class="form-select" name="lang">
+                                            @php
+                                                $r = 1;
+                                            @endphp
+                                            @foreach( $locales  as  $ll)
+                                                <option value="{{ strtolower($ll) }}">{{ strtolower($ll) }}</option>
+                                                @php
+                                                $r++;
+                                            @endphp
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-md-2">
                                         <select id="selectType" class="form-select" name="type">
@@ -142,15 +185,12 @@
                                 </div>
 
                             </form>
+            </div></div>
 
-
-                 
-                
-            </div>
-
-             <div class="col-12 mt-2 pt-5">
+         
+             <!--div class="col-12 mt-2 pt-5">
                 <button id="save" class="btn btn-primary" type="button" >Сохранить страницу</button>
-            </div>
+            </div-->
 
                <div class="toast-container position-fixed bottom-0 end-0 p-3">
             <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -203,7 +243,7 @@
 
                                                                 toast.show();
                                                     
-                                                                 location.reload();
+                                                              //   location.reload();
 
                                             }                                          
 
@@ -242,7 +282,7 @@
                                             .then(response => response.json())
                                             .then(info => {
                                                 if(info.alert_type == 'success'){
-                                                  //  location.reload();
+                                                 //  location.reload();
                                                 }
                                             })
                                             .catch(error => {
@@ -269,7 +309,7 @@
                                         xhr.onreadystatechange = function() {
                                             if (xhr.readyState === 4) {
                                                 if (xhr.status === 200) {
-                                                   location.reload();
+                                                  // location.reload();
 
                                                 } else {
                                                     console.error('Ошибка:', xhr.statusText);
@@ -285,6 +325,7 @@
 
             </div>
         </div>
+         </div>
     </div>
 </main>
 

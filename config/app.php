@@ -85,11 +85,11 @@ return [
 
     'locale' => 'en',
 
-    'available_locales' => [
-        'en',
-        'ru',
-        'uz'
-    ],
+    // 'available_locales' => [
+    //     'ru' => 'Ru',
+    //     'en' => 'En',
+    //     'uz' => 'Uz'
+    // ],
 
     'locales' => [
         'en' => 'En',
@@ -184,6 +184,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        App\Providers\LocaleServiceProvider::class,
     ])->toArray(),
 
     /*

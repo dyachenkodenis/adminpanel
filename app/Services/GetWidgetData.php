@@ -9,26 +9,27 @@ use App\Models\CustomField;
 
 class GetWidgetData
 {
-    public static function get_title($id)
+    public static function getTitle($id)
     {
         $data = Widget::find($id);
-        if ($data):
+        if ( $data ) :
             return $data->title;
         endif;
     }
-    public static function get_all($id)
+    public static function getAll($id)
     {
-        $data = Widget::find($id);
-        if ($data):
+        $data = Widget::all();
+       
+        if ( $data ) :
             return $data->toArray();
         endif;
     }
-    public static function get_widget_fields($id)
+    public static function getWidgetFields($id)
     {
 
         $fields = CustomField::where('web_components_id', $id)->get();
 
-        if ($fields):
+        if ( $fields ) :
             return $fields->toArray();
         endif;
     }
